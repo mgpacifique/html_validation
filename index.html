@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Responsive Form With Validation</title>
+    <style>
+        :root{
+            --bg:#f4f6fb; --card:#ffffff; --accent:#2563eb; --danger:#dc2630; --ok:#16a34a;
+            --muted:#6b7280; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+            background:linear-gradient(180deg,#eef2ff 0%,var(--bg) 100%); color:#0f172a; padding:2rem;
+        }
+        .card{
+            width:100%; max-width:880px; background:var(--card); border-radius:12px; box-shadow:0 6px 30px rgba(2,6,23,0.08); padding:1.25rem;
+        }
+        header{display:flex; align-items:flex-start; gap:1rem; margin-bottom:0.5rem}
+        h1{font-size:1.125rem; margin:0}
+        p.lead{margin:0; color:var(--muted); font-size:0.9rem}
+        form{display:grid; gap:0.75rem}
+        .row{display:grid; gap:0.75rem}
+        @media(min-width:700px){ .row{grid-template-columns:1fr 1fr} }
+        label{font-size:0.85rem; color:#0b1220; display:block; margin-bottom:0.25rem}
+        input, select, textarea{
+            width:100%; padding:0.6rem 0.75rem; border:1px solid #e6e9ef; border-radius:8px; font-size:0.95rem;
+            background:#fff; transition:box-shadow .12s, border-color .12s;
+        }
+        input:focus, textarea:focus{
+            outline:none; border-color:var(--accent); box-shadow:0 0 0 4px rgba(37,99,235,0.08);
+        }
+        .field{
+            position:relative;
+        }
+        .hint{font-size:0.8rem; color:var(--muted); margin-top:0.35rem}
+        .msg{font-size:0.8rem; margin-top:0.4rem; display:flex; align-items:center; gap:0.5rem}
+        .msg.ok{color:var(--ok)}
+        .msg.err{color:var(--danger)}
+        .icon{width:1rem; height:1rem; display:inline-block}
+        .actions{display:flex; gap:0.5rem; justify-content:flex-end; margin-top:0.25rem}
+        button{
+            padding:0.6rem 0.9rem; border-radius:8px; border:0; cursor:pointer; font-weight:600;
+            color:#fff; background:var(--accent);
+        }
+        button[disabled]{opacity:.6; cursor:not-allowed}
+        /* small helper */
+        .meta{font-size:0.78rem; color:var(--muted); text-align:center; margin-top:0.5rem}
+        /* validation styles */
+        .valid{border-color:var(--ok) !important; box-shadow:0 0 0 4px rgba(22,163,74,0.06)}
+        .invalid{border-color:var(--danger) !important; box-shadow:0 0 0 4px rgba(220,38,48,0.06)}
+        /* success panel */
+        .success{
+            padding:0.8rem; border-radius:8px; background:linear-gradient(90deg, rgba(22,163,74,0.06), rgba(37,99,235,0.02));
+            border:1px solid rgba(22,163,74,0.08); color:var(--muted); font-size:0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <main class="card" aria-labelledby="formTitle">
+        <header>
+            <div>
+                <h1 id="formTitle">Create an Account</h1>
+                <p class="lead">Responsive form with live regex validation and accessible feedback.</p>
+            </div>
+        </header>
+
+        <form id="signup" novalidate aria-describedby="formDesc">
+            <p id="formDesc" class="hint">All fields validated as you type. Submit enabled when everything is valid.</p>
+
+            <div class="row">
+                <div class="field">
+                    <label for="fullname">Full name</label>
+                    <input id="fullname" name="fullname" type="text" autocomplete="name" required
+                                 aria-describedby="fullnameHelp fullnameMsg" aria-invalid="false"
+                                 placeholder="Names">
+                    <div id="fullnameHelp" class="hint">Letters, spaces, hyphens allowed. 2–60 chars.</div>
+                    <div id="fullnameMsg" class="msg" aria-live="polite"></div>
+                    <input id = "username" name="username" type="text" placeholder="Username"></div>
+                </div>
+
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required
+                                 aria-describedby="emailHelp emailMsg" aria-invalid="false" placeholder="you@example.com">
+                    <div id="emailHelp" class="hint">We'll never share your email.</div>
+                    <div id="emailMsg" class="msg" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" required
+                                 aria-describedby="passwordHelp passwordMsg" aria-invalid="false" placeholder="••••••••">
+                    <div id="passwordHelp" class="hint">Min 8 chars, 1 uppercase, 1 lowercase, 1 digit, 1 special.</div>
+                    <div id="passwordMsg" class="msg" aria-live="polite"></div>
+                </div>
+
+                <div class="field">
+                    <label for="confirm">Confirm password</label>
+                    <input id="confirm" name="confirm" type="password" required
+                                 aria-describedby="confirmHelp confirmMsg" aria-invalid="false" placeholder="Repeat password">
+                    <div id="confirmHelp" class="hint">Must match the password exactly.</div>
+                    <div id="confirmMsg" class="msg" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="phone">Phone</label>
+                    <input id="phone" name="phone" type="tel" required
+                                 aria-describedby="phoneHelp phoneMsg" aria-invalid="false" placeholder="+250 788 123 456">
+                    <div id="phoneHelp" class="hint">Validating Rwanda phone numbers.</div>
+                    <div id="phoneMsg" class="msg" aria-live="polite"></div>
+                </div>
+
+                <div class="field">
+                    <label for="zip">Postal code</label>
+                    <input id="zip" name="zip" type="text" required
+                                 aria-describedby="zipHelp zipMsg" aria-invalid="false" placeholder="10001">
+                    <div id="zipHelp" class="hint">Rwanda postal codes input 00000.</div>
+                    <div id="zipMsg" class="msg" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="submit" type="submit" disabled>Register</button>
+            </div>
+
+            <div id="result" class="meta" role="status" aria-live="polite"></div>
+        </form>
+    </main>
+
+    <script>
+        (function(){
+            const form = document.getElementById('signup');
+            const submitBtn = document.getElementById('submit');
+            const result = document.getElementById('result');
+
+            // fields
+            const F = {
+                fullname: document.getElementById('fullname'),
+                email: document.getElementById('email'),
+                password: document.getElementById('password'),
+                confirm: document.getElementById('confirm'),
+                phone: document.getElementById('phone'),
+                zip: document.getElementById('zip')
+            };
+
+            // regex rules Github Copilot made me do it
+            const R = {
+                fullname: /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ'’\-\s]{1,59}$/, // letters, hyphen, space, apostrophe
+                email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, // simple but effective
+                password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/, // strong
+                phone: /^(?:\+250\s?|0)?(?:7\d{2}[\s-]?\d{3}[\s-]?\d{3})$/, // Rwanda: +2507xx xxx xxx or 07xx xxx xxx
+                zipUS: /^\d{5}(-\d{4})?$/,
+                zipGeneric: /^[A-Za-z0-9\s\-]{3,10}$/
+            };
+
+            // helper for messages
+            function setState(input, ok, message){
+                const id = input.id + 'Msg';
+                const msg = document.getElementById(id);
+                input.classList.remove('valid','invalid');
+                if(ok === true){
+                    input.classList.add('valid');
+                    input.setAttribute('aria-invalid','false');
+                    msg.className = 'msg ok';
+                    msg.innerHTML = '<span class="icon">✔</span><span>'+message+'</span>';
+                } else if(ok === false){
+                    input.classList.add('invalid');
+                    input.setAttribute('aria-invalid','true');
+                    msg.className = 'msg err';
+                    msg.innerHTML = '<span class="icon">✖</span><span>'+message+'</span>';
+                } else {
+                    input.setAttribute('aria-invalid','false');
+                    msg.className = 'msg';
+                    msg.textContent = '';
+                }
+            }
+
+            // validation functions
+            function validateFullname(){
+                const v = F.fullname.value.trim();
+                if(!v) { setState(F.fullname,false,'Full name is required.'); return false; }
+                if(!R.fullname.test(v)) { setState(F.fullname,false,'Enter 2–60 letters; hyphens and apostrophes allowed.'); return false; }
+                setState(F.fullname,true,'Looks good.');
+                return true;
+            }
+            function validateEmail(){
+                const v = F.email.value.trim();
+                if(!v){ setState(F.email,false,'Email is required.'); return false; }
+                if(!R.email.test(v)){ setState(F.email,false,'Enter a valid email address.'); return false; }
+                setState(F.email,true,'Valid email.');
+                return true;
+            }
+            function validatePassword(){
+                const v = F.password.value;
+                if(!v){ setState(F.password,false,'Password is required.'); return false; }
+                if(!R.password.test(v)){ setState(F.password,false,'Use min 8 chars, upper/lower, digit and special char.'); return false; }
+                setState(F.password,true,'Strong password.');
+                validateConfirm(); // re-check match
+                return true;
+            }
+            function validateConfirm(){
+                const a = F.password.value, b = F.confirm.value;
+                if(!b){ setState(F.confirm,false,'Please confirm your password.'); return false; }
+                if(a !== b){ setState(F.confirm,false,'Passwords do not match.'); return false; }
+                setState(F.confirm,true,'Passwords match.');
+                return true;
+            }
+            function validatePhone(){
+                const v = F.phone.value.trim();
+                if(!v){ setState(F.phone,false,'Phone number is required.'); return false; }
+                if(!R.phone.test(v)){ setState(F.phone,false,'Enter a valid phone (digits, +, spaces, -).'); return false; }
+                setState(F.phone,true,'Valid phone.');
+                return true;
+            }
+            function validateZip(){
+                const v = F.zip.value.trim();
+                if(!v){ setState(F.zip,false,'Postal code is required.'); return false; }
+                if(R.zipUS.test(v) || R.zipGeneric.test(v)){ setState(F.zip,true,'Valid postal code.'); return true; }
+                setState(F.zip,false,'Enter a valid postal code (e.g., 10001).'); return false;
+            }
+
+            // wire events
+            F.fullname.addEventListener('input', debounce(validateFullname,300));
+            F.email.addEventListener('input', debounce(validateEmail,300));
+            F.password.addEventListener('input', debounce(validatePassword,300));
+            F.confirm.addEventListener('input', debounce(validateConfirm,200));
+            F.phone.addEventListener('input', debounce(validatePhone,300));
+            F.zip.addEventListener('input', debounce(validateZip,250));
+
+            // enable submit when all valid
+            const validators = [validateFullname, validateEmail, validatePassword, validateConfirm, validatePhone, validateZip];
+            function checkAll(){
+                const ok = validators.map(fn=>fn()).every(Boolean);
+                submitBtn.disabled = !ok;
+                return ok;
+            }
+            // run periodic check on input
+            Array.from(Object.values(F)).forEach(inp => inp.addEventListener('input', debounce(checkAll,250)));
+
+            form.addEventListener('submit', function(ev){
+                ev.preventDefault();
+                result.textContent = '';
+                if(!checkAll()){
+                    result.textContent = 'Please fix the errors before submitting.';
+                    result.className = 'meta';
+                    return;
+                }
+                // mock submission
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting…';
+                setTimeout(()=>{
+                    submitBtn.textContent = 'Registered';
+                    result.innerHTML = '<div class="success">Demo Account created successfully.</div>';
+                }, 700);
+            });
+
+            // utility: debounce
+            function debounce(fn, wait){
+                let t;
+                return function(...args){
+                    clearTimeout(t);
+                    t = setTimeout(()=>fn.apply(this,args), wait);
+                };
+            }
+
+            // initial hint state
+            setState(F.fullname, null);
+            setState(F.email, null);
+            setState(F.password, null);
+            setState(F.confirm, null);
+            setState(F.phone, null);
+            setState(F.zip, null);
+
+            // accessibility: keyboard focus outline visibility toggle
+            document.addEventListener('keyup', function(e){
+                if(e.key === 'Tab') document.documentElement.style.scrollBehavior = 'smooth';
+            });
+        })();
+    </script>
+</body>
+</html>
